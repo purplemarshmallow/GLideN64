@@ -277,6 +277,74 @@ EXPORT void CALL ViWidthChanged (void);
  ******************************************************************/
 EXPORT void CALL ReadScreen (void **dest, long *width, long *height);
 
+/******************************************************************
+Function: FrameBufferWrite
+Purpose:  This function is called to notify the dll that the
+frame buffer has been modified by CPU at the given address.
+input:    addr		rdram address
+val			val
+size		1 = u8, 2 = u16, 4 = u32
+output:   none
+*******************************************************************/
+EXPORT void CALL FBWrite(unsigned int addr, unsigned int val, unsigned int size);
+
+typedef struct
+{
+	unsigned int addr;
+	unsigned int val;
+	unsigned int size;				// 1 = u8, 2 = u16, 4=u32
+} FrameBufferModifyEntry;
+
+/******************************************************************
+Function: FrameBufferWriteList
+Purpose:  This function is called to notify the dll that the
+frame buffer has been modified by CPU at the given address.
+input:    FrameBufferModifyEntry *plist
+size = size of the plist, max = 1024
+output:   none
+*******************************************************************/
+EXPORT void CALL FBWList(FrameBufferModifyEntry *plist, unsigned int size);
+
+/******************************************************************
+Function: FrameBufferRead
+Purpose:  This function is called to notify the dll that the
+frame buffer memory is being read at the given address.
+DLL should copy content from its render buffer to the frame buffer
+in N64 RDRAM
+DLL is responsible to maintain its own frame buffer memory addr list
+DLL should copy 4KB block content back to RDRAM frame buffer.
+Emulator should not call this function again if other memory
+is read within the same 4KB range
+input:    addr		rdram address
+val			val
+size		1 = u8, 2 = u16, 4 = u32
+output:   none
+*******************************************************************/
+EXPORT void CALL FBRead(unsigned int addr);
+
+/************************************************************************
+Function: FBGetFrameBufferInfo
+Purpose:  This function is called by the emulator core to retrieve frame
+buffer information from the video plugin in order to be able
+to notify the video plugin about CPU frame buffer read/write
+operations
+
+size:
+= 1           byte
+= 2           word (16 bit) <-- this is N64 default depth buffer format
+= 4           dword (32 bit)
+
+when frame buffer information is not available yet, set all values
+in the FrameBufferInfo structure to 0
+
+input:    FrameBufferInfo pinfo[6]
+pinfo is pointed to a FrameBufferInfo structure which to be
+filled in by this function
+output:   Values are return in the FrameBufferInfo structure
+Plugin can return up to 6 frame buffer info
+************************************************************************/
+EXPORT void CALL FBGetFrameBufferInfo(void *pinfo);
+
 #if defined(__cplusplus)
 }
 #endif

@@ -5,6 +5,9 @@
 #include "../OpenGL.h"
 #include "../Config.h"
 #include "../Revision.h"
+#include "../framebuffer.h"
+#include "../gDP.h"
+#include "../RSP.h"
 
 void PluginAPI::DllAbout(/*HWND _hParent*/)
 {
@@ -36,4 +39,24 @@ void PluginAPI::GetDllInfo(PLUGIN_INFO * PluginInfo)
 void PluginAPI::ReadScreen(void **_dest, long *_width, long *_height)
 {
 	video().readScreen(_dest, _width, _height);
+}
+
+void PluginAPI::FBWrite(unsigned int addr, unsigned int val, unsigned int size)
+{
+
+}
+
+void PluginAPI::FBWList(FrameBufferModifyEntry *plist, unsigned int size)
+{
+
+}
+
+void PluginAPI::FBRead(unsigned int addr)
+{
+
+}
+
+void PluginAPI::FBGetFrameBufferInfo(void *p)
+{
+
 }
