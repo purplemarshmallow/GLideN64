@@ -286,7 +286,7 @@ val			val
 size		1 = u8, 2 = u16, 4 = u32
 output:   none
 *******************************************************************/
-EXPORT void CALL FBWrite(unsigned int addr, unsigned int val, unsigned int size);
+EXPORT void CALL FBWrite(unsigned int addr, unsigned int size);
 
 typedef struct
 {

@@ -41,7 +41,7 @@ void PluginAPI::ReadScreen(void **_dest, long *_width, long *_height)
 	video().readScreen(_dest, _width, _height);
 }
 
-void PluginAPI::FBWrite(unsigned int addr, unsigned int val, unsigned int size)
+void PluginAPI::FBWrite(unsigned int addr, unsigned int size)
 {
 
 }
@@ -56,7 +56,21 @@ void PluginAPI::FBRead(unsigned int addr)
 
 }
 
+typedef struct
+{
+	u32 addr;
+	u32 size;
+	u32 width;
+	u32 height;
+} FrameBufferInfo;
+
 void PluginAPI::FBGetFrameBufferInfo(void *p)
 {
+	FrameBufferInfo * pinfo = (FrameBufferInfo *)p;
+	memset(pinfo, 0, sizeof(FrameBufferInfo) * 6);
 
+	pinfo[0].addr = gDP.colorImage.address;
+	pinfo[0].size = gDP.colorImage.size;
+	pinfo[0].width = gDP.colorImage.width;
+	pinfo[0].height = gDP.colorImage.height;
 }

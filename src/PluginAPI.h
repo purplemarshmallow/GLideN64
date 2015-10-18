@@ -62,7 +62,7 @@ public:
 	void DllAbout(/*HWND _hParent*/);
 
 	//fb_info
-	void FBWrite(unsigned int addr, unsigned int val, unsigned int size);
+	void FBWrite(unsigned int addr, unsigned int size);
 	void FBWList(FrameBufferModifyEntry *plist, unsigned int size);
 	void FBRead(unsigned int addr);
 	void FBGetFrameBufferInfo(void *pinfo);
