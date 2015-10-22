@@ -837,6 +837,8 @@ void FrameBuffer_ActivateBufferTexture(s16 t, FrameBuffer *pBuffer)
 //	frameBufferList().renderBuffer(pBuffer->m_startAddress);
 	textureCache().activateTexture(t, pTexture);
 	gDP.changed |= CHANGED_FB_TEXTURE;
+	FrameBuffer_CopyToRDRAM(pBuffer->m_startAddress);
+	frameBufferList().removeBuffer(pBuffer->m_startAddress);
 }
 
 void FrameBuffer_ActivateBufferTextureBG(s16 t, FrameBuffer *pBuffer )
@@ -946,7 +948,7 @@ void FrameBufferToRDRAM::CopyToRDRAM(u32 _address)
 	if (numPixels == 0 || frameBufferList().getCurrent() == NULL) // Incorrect buffer size or no current buffer. Don't copy
 		return;
 	FrameBuffer *pBuffer = frameBufferList().findBuffer(_address);
-	if (pBuffer == NULL || pBuffer->m_width < VI.width || pBuffer->m_isOBScreen)
+	if (pBuffer == NULL || pBuffer->m_isOBScreen)
 		return;
 
 	if ((config.generalEmulation.hacks & hack_subscreen) != 0) {
@@ -974,7 +976,7 @@ void FrameBufferToRDRAM::CopyToRDRAM(u32 _address)
 	glReadBuffer(GL_COLOR_ATTACHMENT0);
 #ifndef GLES2
 	PBOBinder binder(GL_PIXEL_PACK_BUFFER, m_PBO);
-	glReadPixels(0, 0, VI.width, VI.height, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+	glReadPixels(0, 0, pBuffer->m_width, pBuffer->m_height, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 	GLubyte* pixelData = (GLubyte*)glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, numPixels * 4, GL_MAP_READ_BIT);
 	if(pixelData == NULL)
 		return;
@@ -988,15 +990,15 @@ void FrameBufferToRDRAM::CopyToRDRAM(u32 _address)
 #endif // GLES2
 
 	const u32 stride = pBuffer->m_width << pBuffer->m_size >> 1;
-	const u32 height = _cutHeight(_address, VI.height, stride);
+	const u32 height = _cutHeight(_address, pBuffer->m_height, stride);
 
 	if (pBuffer->m_size == G_IM_SIZ_32b) {
 		u32 *ptr_dst = (u32*)(RDRAM + _address);
 		u32 *ptr_src = (u32*)pixelData;
 
 		for (u32 y = 0; y < height; ++y) {
-			for (u32 x = 0; x < VI.width; ++x)
-				ptr_dst[x + y*VI.width] = ptr_src[x + (height - y - 1)*VI.width];
+			for (u32 x = 0; x < pBuffer->m_width; ++x)
+				ptr_dst[x + y*pBuffer->m_width] = ptr_src[x + (height - y - 1)*pBuffer->m_width];
 		}
 	} else {
 		u16 *ptr_dst = (u16*)(RDRAM + _address);
@@ -1004,9 +1006,9 @@ void FrameBufferToRDRAM::CopyToRDRAM(u32 _address)
 		RGBA c;
 
 		for (u32 y = 0; y < height; ++y) {
-			for (u32 x = 0; x < VI.width; ++x) {
-				c.raw = ptr_src[x + (height - y - 1)*VI.width];
-				ptr_dst[(x + y*VI.width)^1] = ((c.r>>3)<<11) | ((c.g>>3)<<6) | ((c.b>>3)<<1) | (c.a == 0 ? 0 : 1);
+			for (u32 x = 0; x < pBuffer->m_width; ++x) {
+				c.raw = ptr_src[x + (height - y - 1)*pBuffer->m_width];
+				ptr_dst[(x + y*pBuffer->m_width) ^ 1] = ((c.r >> 3) << 11) | ((c.g >> 3) << 6) | ((c.b >> 3) << 1) | (c.a == 0 ? 0 : 1);
 			}
 		}
 	}
