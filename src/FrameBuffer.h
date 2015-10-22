@@ -61,6 +61,7 @@ public:
 	void destroy();
 	void saveBuffer(u32 _address, u16 _format, u16 _size, u16 _width, u16 _height, bool _cfb);
 	void removeBuffer(u32 _address);
+	void toRDRAM();
 	void removeBuffers(u32 _width);
 	void attachDepthBuffer();
 	FrameBuffer * findBuffer(u32 _startAddress);

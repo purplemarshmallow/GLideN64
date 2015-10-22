@@ -534,6 +534,16 @@ void FrameBufferList::removeBuffer(u32 _address )
 		}
 }
 
+void FrameBufferList::toRDRAM()
+{
+	for (FrameBuffers::iterator iter = m_list.begin(); iter != m_list.end(); ++iter) {
+		if (iter->m_width != VI.width && iter->m_height != VI.height) {
+			FrameBuffer_CopyToRDRAM(iter->m_startAddress);
+			m_list.erase(iter);
+		}
+	}
+}
+
 void FrameBufferList::removeBuffers(u32 _width)
 {
 	m_pCurrent = NULL;
@@ -837,8 +847,9 @@ void FrameBuffer_ActivateBufferTexture(s16 t, FrameBuffer *pBuffer)
 //	frameBufferList().renderBuffer(pBuffer->m_startAddress);
 	textureCache().activateTexture(t, pTexture);
 	gDP.changed |= CHANGED_FB_TEXTURE;
-	FrameBuffer_CopyToRDRAM(pBuffer->m_startAddress);
-	frameBufferList().removeBuffer(pBuffer->m_startAddress);
+
+	//if (pBuffer->m_width != VI.width && pBuffer->m_height != VI.height)
+		//frameBufferList().removeBuffer(pBuffer->m_startAddress);
 }
 
 void FrameBuffer_ActivateBufferTextureBG(s16 t, FrameBuffer *pBuffer )
