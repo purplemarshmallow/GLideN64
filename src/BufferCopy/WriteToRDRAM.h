@@ -20,7 +20,8 @@ void writeToRdram(TSrc* _src, TDst* _dst, TDst(*converter)(TSrc _c), TSrc _testV
 	if (chunkStart > 0) {
 		for (u32 x = chunkStart; x < _width; ++x) {
 			c = _src[x];
-			if (c != _testValue)
+			//if (c != _testValue && converter(c) != 0)
+            if (converter(c) != 0)
 				_dst[numStored ^ _xor] = converter(c);
 			++numStored;
 		}
@@ -32,7 +33,8 @@ void writeToRdram(TSrc* _src, TDst* _dst, TDst(*converter)(TSrc _c), TSrc _testV
 	for (; y < _height; ++y) {
 		for (u32 x = 0; x < _width && numStored < _numPixels; ++x) {
 			c = _src[x + y *_width];
-			if (c != _testValue)
+			//if (c != _testValue && converter(c) != 0)
+            if (converter(c) != 0)
 				_dst[(x + dsty*_width) ^ _xor] = converter(c);
 			++numStored;
 		}

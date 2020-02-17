@@ -241,6 +241,9 @@ u8 ColorBufferToRDRAM::_RGBAtoR8(u8 _c) {
 u16 ColorBufferToRDRAM::_RGBAtoRGBA16(u32 _c) {
 	RGBA c;
 	c.raw = _c;
+    //if (c.r == 0 && c.g == 0 && c.b == 0)
+    if (c.r == 128 && c.g == 0 && c.b == 128)
+        return 0;
 	return ((c.r >> 3) << 11) | ((c.g >> 3) << 6) | ((c.b >> 3) << 1) | (c.a == 0 ? 0 : 1);
 }
 

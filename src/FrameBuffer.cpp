@@ -205,6 +205,8 @@ void FrameBuffer::init(u32 _address, u16 _format, u16 _size, u16 _width, bool _c
 		gfxContext.bindFramebuffer(bufferTarget::FRAMEBUFFER, m_FBO);
 	} else
 		_setAndAttachTexture(m_FBO, m_pTexture, 0, false);
+        gfxContext.bindFramebuffer(bufferTarget::FRAMEBUFFER, m_FBO);
+        gfxContext.clearColorBuffer((float)128 / 255.0f, 0, (float)128 / 255.0f, 255);
 
 //	gfxContext.clearColorBuffer(0.0f, 0.0f, 0.0f, 0.0f);
 }

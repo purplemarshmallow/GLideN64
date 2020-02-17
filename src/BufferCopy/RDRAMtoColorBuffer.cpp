@@ -172,6 +172,7 @@ u32 RGBA32ToABGR32(u32 col, bool _fullAlpha)
 
 void RDRAMtoColorBuffer::_copyFromRDRAM(u32 _height, bool _fullAlpha)
 {
+    return;
 	Cleaner cleaner(this);
 	const u32 address = m_pCurBuffer->m_startAddress;
 	const u32 width = m_pCurBuffer->m_width;
